@@ -7,7 +7,7 @@ function reload()
 	hs.alert.show("Config loaded")
 end
 
-hs.hotkey.bind({ "cmd", "r" }, "r", function() -- combinazione command + r r per ricaricare config
+hs.hotkey.bind({ "cmd", "+" }, "+", function() -- combinazione command + r r per ricaricare config
 	reload()
 end)
 
