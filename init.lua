@@ -7,9 +7,34 @@ function reload()
 	hs.alert.show("Config loaded")
 end
 
-hs.hotkey.bind({ "cmd", "+" }, "+", function() -- combinazione command + r r per ricaricare config
+hs.hotkey.bind({ "cmd", "." }, ".", function() -- combinazione command + . per ricaricare config
 	reload()
 end)
+
+function open_cursor()
+	local cursorApp = hs.application.find("cursor")
+	if not cursorApp then
+		print("cursor is not running")
+		return
+	end
+
+	local windows = cursorApp:allWindows()
+
+	if #windows == 0 then
+		print("No warp windows found")
+		return
+	end
+
+	if #windows == 1 then -- if there is only one window, focus on it
+		windows[1]:focus()
+		return
+	end
+end
+
+hs.hotkey.bind({ "alt" }, "escape", function()
+	open_cursor()
+end)
+
 
 function sw()
 	local warpApp = hs.application.find("Warp")
@@ -44,14 +69,12 @@ function sw()
 			break -- Esci dal ciclo dopo aver trovato la finestra
 		end
 	end
-
-	if not found then
-		--	print("Nessuna finestra corrispondente trovata per: " .. window_title)
-	end
 end
 
 hs.hotkey.bind({ "cmd" }, "escape", function()
 	sw()
 end)
+
+
 
 hs.alert.show("Config loaded")
