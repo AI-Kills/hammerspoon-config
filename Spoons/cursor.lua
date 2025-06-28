@@ -28,5 +28,9 @@ function write_prompt_in_cursor_instance(args)
 		window_title = window_title,
 	})
 	hs.eventtap.keyStrokes(prompt) -- write the prompt in cursor
-	hs.eventtap.keyStroke({ "cmd" }, "enter") -- press enter
+
+	-- Add a small delay to ensure the text is fully processed
+	hs.timer.doAfter(0.1, function()
+		hs.eventtap.keyStroke({}, "return")
+	end)
 end
