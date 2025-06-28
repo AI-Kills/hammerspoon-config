@@ -29,12 +29,13 @@ function focus_app_window(args)
 			end
 
 			if string.find(win:title(), window_title, 1, true) then
-				print("Focus su finestra: " .. win:title())
+				if print_info then
+					print("Focus su finestra: " .. win:title())
+				end
 				win:focus()
 				return true
 			end
 
-			-- Inserisci la struttura nella lista
 			table.insert(results, { titolo = win:title(), window = win })
 		end
 
@@ -51,8 +52,18 @@ function focus_app_window(args)
 				print(string.format("Frame: x=%d y=%d w=%d h=%d", frame.x, frame.y, frame.w, frame.h))
 			end
 
+			-- Processa il titolo: se contiene "—", prendi solo la parte dopo
+			local processed_title = win:title()
+			local dash_pos = string.find(processed_title, "—")
+			if dash_pos then
+				-- Prendi la sottostringa dopo il "—" e rimuovi gli spazi iniziali
+				processed_title = string.sub(processed_title, dash_pos + 1)
+				processed_title = string.gsub(processed_title, "^%s*", "") -- Rimuovi spazi iniziali
+				print("Processed title: " .. processed_title)
+			end
+
 			-- Inserisci la struttura nella lista
-			table.insert(results, { titolo = win:title(), window = win })
+			table.insert(results, { titolo = processed_title, window = win })
 		end
 
 		return results
