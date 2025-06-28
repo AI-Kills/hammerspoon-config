@@ -35,7 +35,6 @@ hs.hotkey.bind({ "alt" }, "escape", function()
 	open_cursor()
 end)
 
-
 function sw()
 	local warpApp = hs.application.find("Warp")
 	if not warpApp then
@@ -74,7 +73,5 @@ end
 hs.hotkey.bind({ "cmd" }, "escape", function()
 	sw()
 end)
-
-
 
 hs.alert.show("Config loaded")
