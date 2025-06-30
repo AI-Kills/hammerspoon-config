@@ -34,3 +34,19 @@ function write_prompt_in_cursor_instance(args)
 		hs.eventtap.keyStroke({}, "return")
 	end)
 end
+
+function write_prompt_in_cursor_instance_for_background_agent(args)
+	local window_title = args.window_title
+	local prompt = args.prompt
+	focus_app_window({
+		app_name = "cursor",
+		window_title = window_title,
+	})
+	hs.eventtap.keyStroke({ "cmd", "E" }, "E")
+	hs.eventtap.keyStrokes(prompt) -- write the prompt in cursor
+
+	-- Add a small delay to ensure the text is fully processed
+	hs.timer.doAfter(0.1, function()
+		hs.eventtap.keyStroke({}, "return")
+	end)
+end
