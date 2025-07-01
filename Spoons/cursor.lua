@@ -48,12 +48,10 @@ end
 function write_prompt_in_cursor_instance(args)
 	local prompt = args.prompt
 	local window_title = args.window_title
-	print(window_title)
 
 	focus_app_window({
 		app_name = "cursor",
 		window_title = window_title,
-		print_info = true,
 	})
 	hs.timer.doAfter(2, function()
 		hs.eventtap.keyStroke({ "cmd", "N" }, "N")
