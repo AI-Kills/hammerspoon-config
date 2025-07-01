@@ -80,14 +80,10 @@ function write_prompt_in_cursor_instance_for_background_agent(args)
 	-- Se open_cloud_modal è true, premi Cmd+E
 	hs.timer.doAfter(2, function()
 		hs.eventtap.keyStroke({ "cmd", "E" }, "E")
-		hs.timer.doAfter(1, function()
-			hs.eventtap.keyStroke({ "cmd", "E" }, "E")
-
-			hs.timer.doAfter(0.2, function()
-				hs.eventtap.keyStrokes(prompt) -- write the prompt in cursor
-				hs.timer.doAfter(0.3, function()
-					hs.eventtap.keyStroke({}, "return")
-				end)
+		hs.timer.doAfter(0.2, function()
+			hs.eventtap.keyStrokes(prompt) -- write the prompt in cursor
+			hs.timer.doAfter(0.3, function()
+				hs.eventtap.keyStroke({}, "return")
 			end)
 		end)
 	end)
