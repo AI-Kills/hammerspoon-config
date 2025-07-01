@@ -42,20 +42,21 @@ function focus_app_window(args)
 			table.insert(results, { titolo = win:title(), window = win })
 		end
 
-    if print_info then
-		  print("Finestra con titolo '" .. window_title .. "' non trovata.")
-		return results
-	else
-		for i, win in ipairs(windows) do
-			if print_info then
-				print("---- Finestra #" .. i .. " ----")
-				print("Titolo: " .. win:title())
-				print("ID: " .. win:id())
-				print("Ruolo: " .. (win:role() or "N/A"))
-				local frame = win:frame()
-				print(string.format("Frame: x=%d y=%d w=%d h=%d", frame.x, frame.y, frame.w, frame.h))
+		if print_info then
+			print("Finestra con titolo '" .. window_title .. "' non trovata.")
+			return results
+		else
+			for i, win in ipairs(windows) do
+				if print_info then
+					print("---- Finestra #" .. i .. " ----")
+					print("Titolo: " .. win:title())
+					print("ID: " .. win:id())
+					print("Ruolo: " .. (win:role() or "N/A"))
+					local frame = win:frame()
+					print(string.format("Frame: x=%d y=%d w=%d h=%d", frame.x, frame.y, frame.w, frame.h))
+				end
+				win:focus()
 			end
-			win:focus()
 		end
 	end
 end
