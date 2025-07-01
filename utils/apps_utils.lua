@@ -42,7 +42,8 @@ function focus_app_window(args)
 			table.insert(results, { titolo = win:title(), window = win })
 		end
 
-		print("Finestra con titolo '" .. window_title .. "' non trovata.")
+    if print_info then
+		  print("Finestra con titolo '" .. window_title .. "' non trovata.")
 		return results
 	else
 		for i, win in ipairs(windows) do
