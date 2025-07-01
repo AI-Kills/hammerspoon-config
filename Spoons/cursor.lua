@@ -56,7 +56,7 @@ function write_prompt_in_cursor_instance(args)
 		print_info = true,
 	})
 	hs.timer.doAfter(2, function()
-		hs.eventtap.keyStroke({ "cmd", "I" }, "I")
+		hs.eventtap.keyStroke({ "cmd", "N" }, "N")
 
 		hs.timer.doAfter(0.2, function()
 			hs.eventtap.keyStrokes(prompt) -- write the prompt in cursor
