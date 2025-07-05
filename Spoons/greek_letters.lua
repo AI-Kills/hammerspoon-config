@@ -55,23 +55,26 @@ local listener = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
         return false
     end
     
-    buffer = buffer .. char
-    print("🔍 Buffer: '" .. buffer .. "'")
+    -- NUOVA LOGICA BUFFER: 
+    -- Se è ∆, aggiungilo al buffer
+    -- Se è una lettera normale, SOSTITUISCI il buffer con solo quella lettera
+    
+    if char == "∆" then
+        buffer = buffer .. char  -- Aggiungi ∆ al buffer esistente
+        print("🔍 Aggiunto ∆ al buffer: '" .. buffer .. "'")
+    else
+        buffer = char  -- SOSTITUISCI il buffer con solo questa lettera
+        print("🔍 Nuovo buffer (solo ultima lettera): '" .. buffer .. "'")
+    end
     
     -- Controlla se il buffer termina con ∆
     if string.match(buffer, "∆$") then
         print("🔍 RILEVATO DELTA!")
         
-        -- Salva il buffer prima di resettarlo
-        local buffer_to_process = buffer
-        
-        -- BLOCCA IMMEDIATAMENTE l'evento per evitare interferenze
-        buffer = ""
-        
         -- Estrai SOLO l'ultimo carattere prima di ∆
-        local latin_char = string.match(buffer_to_process, "([^∆])∆$")
+        local latin_char = string.match(buffer, "([^∆])∆$")
         
-        print("🔍 Buffer completo era: '" .. buffer_to_process .. "'")
+        print("🔍 Buffer completo era: '" .. buffer .. "'")
         print("🔍 Ultimo carattere prima di ∆: '" .. (latin_char or "NESSUNO") .. "'")
         
         if latin_char then
@@ -86,43 +89,39 @@ local listener = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
             
             if greek_letter then
                 -- SEMPLICE E VELOCE:
-                -- 1. Cancella ∆ (backspace)
-                -- 2. Cancella lettera latina (backspace)  
-                -- 3. Inserisci lettera greca
+                -- 1. Cancella lettera latina (backspace)  
+                -- 2. Inserisci lettera greca
                 
-                hs.eventtap.keyStroke({}, "delete")      -- Cancella ∆
                 hs.eventtap.keyStroke({}, "delete")      -- Cancella lettera latina
                 hs.eventtap.keyStrokes(greek_letter)     -- Inserisci lettera greca
                 
-                print("✅ " .. latin_char .. "∆ → " .. greek_letter)
+                --print("✅ " .. latin_char .. "∆ → " .. greek_letter)
             else
-                print("❌ Nessuna corrispondenza per: '" .. latin_char .. "'")
+                --print("❌ Nessuna corrispondenza per: '" .. latin_char .. "'")
             end
         else
-            print("❌ Non riesco a estrarre l'ultimo carattere dal buffer")
+            --print("❌ Non riesco a estrarre l'ultimo carattere dal buffer")
         end
         
+        buffer = ""  -- Resetta il buffer dopo la sostituzione
         return true -- BLOCCA l'evento originale SUBITO
     end
     
-    -- Pulisce il buffer se diventa troppo lungo
-    if #buffer > 20 then
-        buffer = ""
-    end
+    -- Non c'è più pulizia del buffer per lunghezza - teniamo solo l'ultima lettera
     
     return false
 end)
 
 -- Avvia il listener
-print("🔧 Tentativo di avvio listener...")
+--print("🔧 Tentativo di avvio listener...")
 
 local success, error = pcall(function()
     listener:start()
 end)
 
 if success then
-    print("✅ Listener avviato senza errori")
-    print("📊 Stato listener:", listener:isEnabled())
+    --print("✅ Listener avviato senza errori")
+    --print("📊 Stato listener:", listener:isEnabled())
     
     if listener:isEnabled() then
         print("✅ Listener confermato ATTIVO")
