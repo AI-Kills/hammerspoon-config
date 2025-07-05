@@ -9,7 +9,7 @@ require("utils.apps_utils")
 require("Spoons.resume_chrome_page")
 
 -- Carica il modulo per le lettere greche
-require("Spoons.greek_letters")
+require("Spoons.keys_substitutions")
 
 -- uno può definirsi delle funzioni che possono essere richiamate nella hs cli
 function reload()
