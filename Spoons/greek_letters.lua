@@ -85,28 +85,16 @@ local listener = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
             local greek_letter = latin_to_greek[latin_char:lower()]
             
             if greek_letter then
-                print("🔍 DEBUG: Trovata lettera greca: " .. greek_letter)
+                -- SEMPLICE E VELOCE:
+                -- 1. Cancella ∆ (backspace)
+                -- 2. Cancella lettera latina (backspace)  
+                -- 3. Inserisci lettera greca
                 
-                -- SOSTITUZIONE ASINCRONA per evitare conflitti di timing
-                hs.timer.doAfter(0.01, function()
-                    print("🔍 DEBUG: Inizio sostituzione asincrona...")
-                    
-                    -- Cancella solo 2 caratteri: la lettera + ∆
-                    print("🔍 DEBUG: Invio 2 backspace per '" .. latin_char .. "∆'...")
-                    
-                    for i = 1, 2 do
-                        hs.eventtap.keyStroke({}, "delete")
-                    end
-                    
-                    -- Piccolo delay prima dell'inserimento
-                    hs.timer.doAfter(0.01, function()
-                        print("🔍 DEBUG: Inserisco lettera greca...")
-                        hs.pasteboard.setContents(greek_letter)
-                        hs.eventtap.keyStroke({"cmd"}, "v")
-                        
-                        print("✅ Convertito: " .. latin_char .. "∆ → " .. greek_letter)
-                    end)
-                end)
+                hs.eventtap.keyStroke({}, "delete")      -- Cancella ∆
+                hs.eventtap.keyStroke({}, "delete")      -- Cancella lettera latina
+                hs.eventtap.keyStrokes(greek_letter)     -- Inserisci lettera greca
+                
+                print("✅ " .. latin_char .. "∆ → " .. greek_letter)
             else
                 print("❌ Nessuna corrispondenza per: '" .. latin_char .. "'")
             end
