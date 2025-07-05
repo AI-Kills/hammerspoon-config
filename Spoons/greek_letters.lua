@@ -13,23 +13,21 @@ local latin_to_greek = {
     ["e"] = "Ε",   -- epsilon
     ["z"] = "Ζ",   -- zeta
     ["h"] = "Η",   -- eta
-    ["th"] = "Θ",  -- theta
+    ["q"] = "Θ",  -- theta
     ["i"] = "Ι",   -- iota
     ["k"] = "Κ",   -- kappa
     ["l"] = "Λ",   -- lambda
     ["m"] = "Μ",   -- mu
     ["n"] = "Ν",   -- nu
     ["x"] = "Ξ",   -- xi
-    ["o"] = "Ο",   -- omicron
     ["p"] = "Π",   -- pi
     ["r"] = "Ρ",   -- rho
     ["s"] = "Σ",   -- sigma
     ["t"] = "Τ",   -- tau
     ["y"] = "Υ",   -- upsilon
-    ["ph"] = "Φ",  -- phi
-    ["ch"] = "Χ",  -- chi
-    ["ps"] = "Ψ",  -- psi
-    ["om"] = "Ω"   -- omega
+    ["f"] = "Φ",  -- phi
+    ["y"] = "Ψ",  -- psi
+    ["o"] = "Ω"   -- omega
 }
 
 print("Greek Letters Converter attivato")
@@ -70,19 +68,21 @@ local listener = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
         -- BLOCCA IMMEDIATAMENTE l'evento per evitare interferenze
         buffer = ""
         
-        -- Estrai la parte prima di ∆
-        local latin_part = string.match(buffer_to_process, "(.*)∆$")
+        -- Estrai SOLO l'ultimo carattere prima di ∆
+        local latin_char = string.match(buffer_to_process, "([^∆])∆$")
         
-        if latin_part then
-            -- Pulisci caratteri invisibili
-            latin_part = string.gsub(latin_part, "%c", "")
-            latin_part = string.gsub(latin_part, "%s", "")
-            latin_part = latin_part:gsub("[\0\1\2\3\4\5\6\7\8\9\10\11\12\13\14\15\16\17\18\19\20\21\22\23\24\25\26\27\28\29\30\31\127]", "")
+        print("🔍 Buffer completo era: '" .. buffer_to_process .. "'")
+        print("🔍 Ultimo carattere prima di ∆: '" .. (latin_char or "NESSUNO") .. "'")
+        
+        if latin_char then
+            -- Pulisci il carattere (anche se dovrebbe essere già pulito)
+            latin_char = string.gsub(latin_char, "%c", "")
+            latin_char = string.gsub(latin_char, "%s", "")
             
-            print("🔍 Parte latina pulita: '" .. latin_part .. "'")
+            print("🔍 Carattere latino pulito: '" .. latin_char .. "'")
             
-            -- Cerca la corrispondenza
-            local greek_letter = latin_to_greek[latin_part:lower()]
+            -- Cerca la corrispondenza (ora sempre 1 carattere)
+            local greek_letter = latin_to_greek[latin_char:lower()]
             
             if greek_letter then
                 print("🔍 DEBUG: Trovata lettera greca: " .. greek_letter)
@@ -91,11 +91,10 @@ local listener = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
                 hs.timer.doAfter(0.01, function()
                     print("🔍 DEBUG: Inizio sostituzione asincrona...")
                     
-                    -- Cancella il testo (conta solo i caratteri visibili)
-                    local visible_length = utf8.len(latin_part) + 1  -- +1 per ∆
-                    print("🔍 DEBUG: Invio " .. visible_length .. " backspace per '" .. latin_part .. "∆'...")
+                    -- Cancella solo 2 caratteri: la lettera + ∆
+                    print("🔍 DEBUG: Invio 2 backspace per '" .. latin_char .. "∆'...")
                     
-                    for i = 1, visible_length do
+                    for i = 1, 2 do
                         hs.eventtap.keyStroke({}, "delete")
                     end
                     
@@ -105,12 +104,14 @@ local listener = hs.eventtap.new({hs.eventtap.event.types.keyDown}, function(eve
                         hs.pasteboard.setContents(greek_letter)
                         hs.eventtap.keyStroke({"cmd"}, "v")
                         
-                        print("✅ Convertito: " .. latin_part .. "∆ → " .. greek_letter)
+                        print("✅ Convertito: " .. latin_char .. "∆ → " .. greek_letter)
                     end)
                 end)
             else
-                print("❌ Nessuna corrispondenza per: '" .. latin_part .. "'")
+                print("❌ Nessuna corrispondenza per: '" .. latin_char .. "'")
             end
+        else
+            print("❌ Non riesco a estrarre l'ultimo carattere dal buffer")
         end
         
         return true -- BLOCCA l'evento originale SUBITO
