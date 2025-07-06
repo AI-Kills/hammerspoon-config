@@ -2,19 +2,16 @@
 require("Spoons.cursor")
 require("Spoons.warp")
 
--- cmd + . per reload
-hs.hotkey.bind({ "cmd", "." }, ".", function()
-	reload()
-end)
-
 hs.hotkey.bind({ "alt" }, "escape", function()
-	open_cursor()
+	focus_on_cursor_window()
 end)
 
 hs.hotkey.bind({ "cmd" }, "escape", function()
 	sw()
 end)
 
-hs.hotkey.bind({ "alt", "." }, ".", function()
-	write_prompt()
-end)
+-- Carica il modulo per riprendere pagine Chrome
+require("Spoons.resume_chrome_page")
+
+-- Carica il modulo per le lettere greche
+require("Spoons.keys_substitutions")

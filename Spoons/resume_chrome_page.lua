@@ -52,7 +52,7 @@ end
 -- Funzione per inizializzare il modulo e configurare il hotkey
 function M.init()
 	-- Configura il hotkey: Command + < per attivare la funzione resume
-	hotkey = hs.hotkey.bind({ "cmd" }, "+", function()
+	hotkey = hs.hotkey.bind({ "cmd" }, "-", function()
 		print("Resume Chrome Page: Attivato hotkey Command+<")
 		M.resume()
 	end)

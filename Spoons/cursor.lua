@@ -25,7 +25,7 @@ function move_to_main_screen()
 	end
 end
 
-function open_cursor()
+function focus_on_cursor_window()
 	local cursorApp = hs.application.find("cursor")
 	if not cursorApp then
 		print("cursor is not running")
@@ -35,7 +35,7 @@ function open_cursor()
 	local windows = cursorApp:allWindows()
 
 	if #windows == 0 then
-		print("No warp windows found")
+		print("No cursor windows found")
 		return
 	end
 

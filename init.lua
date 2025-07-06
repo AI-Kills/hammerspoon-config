@@ -5,12 +5,6 @@ hs.application.enableSpotlightForNameSearches(true)
 require("keybindings")
 require("utils.apps_utils")
 
--- Carica il modulo per riprendere pagine Chrome
-require("Spoons.resume_chrome_page")
-
--- Carica il modulo per le lettere greche
-require("Spoons.keys_substitutions")
-
 -- uno può definirsi delle funzioni che possono essere richiamate nella hs cli
 function reload()
 	hs.reload()
