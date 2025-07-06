@@ -15,3 +15,9 @@ require("Spoons.resume_chrome_page")
 
 -- Carica il modulo per le lettere greche
 require("Spoons.keys_substitutions")
+
+-- Carica il modulo per raycast clipboard
+RaycastClipboard = require("Spoons.raycast_clipboard")
+
+RaycastClipboard:init()
+RaycastClipboard:start()
