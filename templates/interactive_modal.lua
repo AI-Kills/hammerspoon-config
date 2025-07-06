@@ -5,7 +5,7 @@ local RaycastClipboard = {}
 function RaycastClipboard:init()
 	-- Variabile per tracciare il numero selezionato
 	self.selectedNumber = nil
-	
+
 	-- Crea il modal SENZA hotkey automatico
 	self.modal = hs.hotkey.modal.new()
 
@@ -17,7 +17,7 @@ function RaycastClipboard:init()
 			hs.alert.show("Selezionato numero: " .. i .. " - ora premi cmd+v")
 		end)
 	end
-	
+
 	-- Bind per cmd+v
 	self.modal:bind({ "cmd" }, "v", function()
 		if self.selectedNumber then
@@ -35,7 +35,7 @@ function RaycastClipboard:init()
 		self.selectedNumber = nil -- Reset
 		self.modal:exit()
 	end)
-	
+
 	-- Bind ESC per uscire dal modal
 	self.modal:bind({}, "escape", function()
 		self.selectedNumber = nil -- Reset
