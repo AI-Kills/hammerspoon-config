@@ -2,6 +2,9 @@
 require("Spoons.cursor")
 require("Spoons.warp")
 
+-- Carica il modulo per Chrome hotkeys
+local chrome_hotkeys = require("Spoons.chrome_hotkeys")
+
 hs.hotkey.bind({ "alt" }, "escape", function()
 	focus_on_cursor_window()
 end)
@@ -15,3 +18,6 @@ require("Spoons.resume_chrome_page")
 
 -- Carica il modulo per le lettere greche
 require("Spoons.keys_substitutions")
+
+-- Attiva il toggle dei devtools di Chrome con il tasto ù
+chrome_hotkeys.open_dev_tools_shortcut()
