@@ -2,6 +2,10 @@
 require("Spoons.cursor")
 require("Spoons.warp")
 
+-- Carica e avvia il modulo temp-keybindings
+local tempKeybindings = require("Spoons.temp-keybindings")
+tempKeybindings:init()
+
 -- Carica il modulo per Chrome hotkeys
 local chrome_hotkeys = require("Spoons.chrome_hotkeys")
 
