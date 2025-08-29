@@ -14,7 +14,22 @@ hs.hotkey.bind({ "alt" }, "escape", function()
 end)
 
 hs.hotkey.bind({ "cmd" }, "escape", function()
-	sw()
+	local cmd = [[open -a "Warp"]]
+	hs.task
+		.new(
+			"/bin/zsh",
+			function(exitCode, stdout, stderr)
+				hs.notify
+					.new({
+						title = "Shell task",
+						informativeText = ("exit=%d\n%s%s"):format(exitCode, stdout, stderr),
+						withdrawAfter = 3,
+					})
+					:send()
+			end,
+			{ "-lc", cmd } -- -l = login: carica ~/.zprofile; -c = esegui comando
+		)
+		:start()
 end)
 
 -- Carica il modulo per riprendere pagine Chrome
