@@ -10,7 +10,22 @@ tempKeybindings:init()
 local chrome_hotkeys = require("Spoons.chrome_hotkeys")
 
 hs.hotkey.bind({ "alt" }, "escape", function()
-	focus_on_cursor_window()
+	local cmd = [[open -a "cursor"]]
+	hs.task
+		.new(
+			"/bin/zsh",
+			function(exitCode, stdout, stderr)
+				hs.notify
+					.new({
+						title = "Shell task",
+						informativeText = ("exit=%d\n%s%s"):format(exitCode, stdout, stderr),
+						withdrawAfter = 3,
+					})
+					:send()
+			end,
+			{ "-lc", cmd } -- -l = login: carica ~/.zprofile; -c = esegui comando
+		)
+		:start()
 end)
 
 hs.hotkey.bind({ "cmd" }, "escape", function()

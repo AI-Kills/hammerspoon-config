@@ -10,9 +10,20 @@ obj.modal = nil
 obj.sequenceBuffer = ""
 obj.sequenceTimer = nil
 
+-- Mapping configuration with type distinction
+-- type: "key" for key substitution, "string" for string substitution
 local temp_keybindings_mapping = {
-	{ "h", "tab" },
-	-- { "k", "/" },
+	{ key = "h", action = "tab", type = "key" },
+	{ key = "r", action = 'hs -c "reload()"', type = "string" },
+	{ key = "s", action = 'hs -c "sw()"', type = "string" },
+	{ key = "f", action = " | grep -E -i ", type = "string" },
+	{ key = "l", action = "  | _", type = "string" },
+	{ key = "x", action = ' | _x &&  "$x"', type = "string" },
+
+	-- Examples:
+	-- { key = "a", action = "Hello World!", type = "string" },
+	-- { key = "j", action = "down", type = "key" },
+	-- { key = "k", action = "up", type = "key" },
 }
 
 -- Initialize the spoon
@@ -20,7 +31,7 @@ function obj:init()
 	-- Create modal for temp keybindings
 	self.modal = hs.hotkey.modal.new()
 
-	-- Setup activation hotkey (Cmd+Y)
+	-- Setup activation hotkey (Cmd+H)
 	hs.hotkey.bind({ "cmd" }, "h", function()
 		self:toggleTempMode()
 	end)
@@ -33,18 +44,44 @@ end
 
 -- Setup temporary keybindings
 function obj:setupTempKeybindings()
-	-- bind the keybinings in
-	for _, pair in ipairs(temp_keybindings_mapping) do
-		local _x, x_ = pair[1], pair[2]
-		self.modal:bind({}, _x, function()
-			hs.eventtap.keyStroke({}, x_)
+	for _, mapping in ipairs(temp_keybindings_mapping) do
+		local key = mapping.key
+		local action = mapping.action
+		local actionType = mapping.type
+
+		self.modal:bind({}, key, function()
+			if actionType == "key" then
+				self:handleKeySubstitution(action)
+			elseif actionType == "string" then
+				self:handleStringSubstitution(action)
+			end
 		end)
 	end
+end
 
-	-- TODO: generalize in the keybinding mapping
-	self.modal:bind({}, "y", function()
-		hs.eventtap.keyStroke({ "cmd" }, "right")
-	end)
+-- Handle key substitution
+function obj:handleKeySubstitution(action)
+	if type(action) == "string" then
+		-- Simple key stroke
+		hs.eventtap.keyStroke({}, action)
+	elseif type(action) == "table" then
+		-- Key stroke with modifiers
+		local modifiers = {}
+		local key = action[#action] -- Last element is the key
+
+		-- All elements except the last are modifiers
+		for i = 1, #action - 1 do
+			table.insert(modifiers, action[i])
+		end
+
+		hs.eventtap.keyStroke(modifiers, key)
+	end
+end
+
+-- Handle string substitution
+function obj:handleStringSubstitution(text)
+	-- Type the string directly
+	hs.eventtap.keyStrokes(text)
 end
 
 -- Toggle temp mode on/off
@@ -57,7 +94,25 @@ function obj:toggleTempMode()
 	else -- activate mode
 		self.isActive = true
 		self.modal:enter()
-		hs.alert.show("🔥 Temp Keybindings: ON\n(h→tab, r→commad + right arrow, command Y to exit)", 2)
+
+		-- Generate dynamic alert message based on current mappings
+		local alertMessage = "🔥 Temp Keybindings: ON\n"
+		for _, mapping in ipairs(temp_keybindings_mapping) do
+			local actionDesc = ""
+			if mapping.type == "key" then
+				if type(mapping.action) == "string" then
+					actionDesc = mapping.action
+				else
+					actionDesc = table.concat(mapping.action, "+")
+				end
+			else
+				actionDesc = "'" .. mapping.action .. "'"
+			end
+			alertMessage = alertMessage .. mapping.key .. "→" .. actionDesc .. ", "
+		end
+		alertMessage = alertMessage .. "Cmd+H to exit"
+
+		hs.alert.show(alertMessage, 3)
 		print("Temp keybindings mode activated")
 	end
 end
