@@ -1,47 +1,41 @@
 ---
-description: the list of the convetional alias for the prompts
+description: the list of the conventional alias for the prompts
 globs: 
 alwaysApply: true
 ---
 the following is a list of conventions that map specific prompt forms to specific kinds of tasks to be executed.
 they are in the form: alias -> corresponding task
 
-- d or doc -> document the code, the documentation should be aimed at a senior software engineer, so no obvious redundancies, only 
-        clear direct concise explanations
-- c or complete -> add the missing details according to the comments given
-- s or style -> give style following the styling conventions of this project
-- t or test -> write the tests for the code
-- f -> fix
-- r or format -> reformat the code: fix indenting and formatting
-- arule ->  add a .mdc file in the .cursor/rules directory, ie create a new rule conforming to the following specifications:
-            the file will start with a graymatter header with the fields: descriprion, blobs, alwaysApply (alwaysApply set by default to false) 
-            the title of the file will be generated from the content of the prompt 
-            the content of the field "description" is to be generated from the content of the prompt
-            the content of the field "blobs" is to be left empty
 
-            after the header, the body part of the file will be generated following the specifications of the user prompt
+attention: never use npm; instead of npm use pnpm
 
-! important: if the alias is followed by g then it is intended the operation is to be performed on all the files that have changed with the last commit. 
 
-example:
-user gives prompt: dg
-this means: document all the files that have changed with the last commit
-                        
-example: 
-user gives prompt: s my-component.tsx 
-this means the  "give style to my-component.tsx following the styling conventions of this project" is the intended prompt.
+you should always respond in a very concise style. 
+we don't have time to lose, if i have a question, i will ask. 
+always keep a motivating positive attitude.
 
-it may happen that other text is provided after the alias, in which case such text is intended as a specification for the task;
+- vf -> if I write vf, respond only with "true" if the answer is positive, 
+  otherwise respond with "false" and explain why;
+- Φ  -> replace in the code, wherever you find a comment that starts with Φ, the implementation
+  requested by the comment
+- Ψ -> this simbol delimits a portion of the code, indicating the only parts you have to edit, and how to edit it   
+       example: 
 
-example: 
-arule description of how to style the html elements in the project: you find the css to be applied in the global.css file, no other classes or styles are to be applied to define the colors
+       console.log("carmelino")
+      // Ψ adatta in una funzione _sum che somma a e b e moltiplica per 2
+         function sum(a,b){
+            return a+b
+          }
+      // Ψ 
+      [...altro codice...]
 
-is transformed in the  "style.mdc", containing: 
-"
----
-description:  description of how to style the html elements in the project
-globs: 
-alwaysApply: false
----
-you find the css to be applied in the global.css file, no other classes or styles are to be applied to define the colors
-"
+      dopo modifica: 
+
+
+      console.log("carmelino")
+      function _sum(a,b){
+          return (a+b)*2
+        }
+      [...altro codice...] //non modificato
+
+
