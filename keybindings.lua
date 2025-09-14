@@ -28,25 +28,6 @@ hs.hotkey.bind({ "alt" }, "escape", function()
 		:start()
 end)
 
-hs.hotkey.bind({ "cmd" }, "escape", function()
-	local cmd = [[open -a "Warp"]]
-	hs.task
-		.new(
-			"/bin/zsh",
-			function(exitCode, stdout, stderr)
-				hs.notify
-					.new({
-						title = "Shell task",
-						informativeText = ("exit=%d\n%s%s"):format(exitCode, stdout, stderr),
-						withdrawAfter = 3,
-					})
-					:send()
-			end,
-			{ "-lc", cmd } -- -l = login: carica ~/.zprofile; -c = esegui comando
-		)
-		:start()
-end)
-
 -- Carica il modulo per riprendere pagine Chrome
 require("Spoons.resume_chrome_page")
 
@@ -55,3 +36,11 @@ require("Spoons.keys_substitutions")
 
 -- Attiva il toggle dei devtools di Chrome con il tasto ù
 chrome_hotkeys.open_dev_tools_shortcut()
+
+-- Attiva la funzione sw quando si preme command + spazio
+hs.hotkey.bind({ "cmd" }, "escape", function()
+	sw()
+end)
+
+--  Φaggiungi che µ (equivalente a option m ) corrisponda alla sostituzione della stringa
+--  "$()" con il cursore che si mette tra le parentesi

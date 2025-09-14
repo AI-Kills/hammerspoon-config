@@ -10,20 +10,22 @@ obj.modal = nil
 obj.sequenceBuffer = ""
 obj.sequenceTimer = nil
 
--- Mapping configuration with type distinction
--- type: "key" for key substitution, "string" for string substitution
+-- Mapping configuration with action chains
+-- Each mapping can have multiple actions executed in sequence
+-- action format: { type = "key"/"string", value = "action_content" }
+-- For keys: value can be string or table with modifiers
+-- For strings: value is the text to type
 local temp_keybindings_mapping = {
-	{ key = "h", action = "tab", type = "key" },
-	{ key = "r", action = 'hs -c "reload()"', type = "string" },
-	{ key = "s", action = 'hs -c "sw()"', type = "string" },
-	{ key = "f", action = " | grep -E -i ", type = "string" },
-	{ key = "l", action = "  | _", type = "string" },
-	{ key = "x", action = ' | _x &&  "$x"', type = "string" },
-
-	-- Examples:
-	-- { key = "a", action = "Hello World!", type = "string" },
-	-- { key = "j", action = "down", type = "key" },
-	-- { key = "k", action = "up", type = "key" },
+	{
+		key = "h",
+		actions = {
+			{ type = "key", value = "tab" },
+		},
+	},
+	--) Examples:
+	-- { key = "a", actions = { { type = "string", value = "Hello World!" } } },
+	-- { key = "j", actions = { { type = "key", value = "down" } } },
+	-- { key = "k", actions = { { type = "key", value = "up" } } },
 }
 
 -- Initialize the spoon
@@ -31,8 +33,8 @@ function obj:init()
 	-- Create modal for temp keybindings
 	self.modal = hs.hotkey.modal.new()
 
-	-- Setup activation hotkey (Cmd+H)
-	hs.hotkey.bind({ "cmd" }, "h", function()
+	-- Setup activation hotkey
+	hs.hotkey.bind({ "alt" }, ",", function()
 		self:toggleTempMode()
 	end)
 
@@ -46,14 +48,25 @@ end
 function obj:setupTempKeybindings()
 	for _, mapping in ipairs(temp_keybindings_mapping) do
 		local key = mapping.key
-		local action = mapping.action
-		local actionType = mapping.type
+		local actions = mapping.actions
 
 		self.modal:bind({}, key, function()
-			if actionType == "key" then
-				self:handleKeySubstitution(action)
-			elseif actionType == "string" then
-				self:handleStringSubstitution(action)
+			self:executeActionChain(actions)
+		end)
+	end
+end
+
+-- Execute a chain of actions with small delays between them
+function obj:executeActionChain(actions)
+	for i, action in ipairs(actions) do
+		-- Add small delay between actions for better reliability
+		local delay = (i - 1) * 0.05 -- 50ms delay between actions
+
+		hs.timer.doAfter(delay, function()
+			if action.type == "key" then
+				self:handleKeySubstitution(action.value)
+			elseif action.type == "string" then
+				self:handleStringSubstitution(action.value)
 			end
 		end)
 	end
@@ -84,35 +97,40 @@ function obj:handleStringSubstitution(text)
 	hs.eventtap.keyStrokes(text)
 end
 
+-- Generate description for action chain (for alert message)
+function obj:getActionChainDescription(actions)
+	local descriptions = {}
+	for _, action in ipairs(actions) do
+		if action.type == "key" then
+			if type(action.value) == "string" then
+				table.insert(descriptions, action.value)
+			else
+				table.insert(descriptions, table.concat(action.value, "+"))
+			end
+		else
+			-- Truncate long strings for display
+			local text = action.value
+			if #text > 15 then
+				text = string.sub(text, 1, 12) .. "..."
+			end
+			table.insert(descriptions, "'" .. text .. "'")
+		end
+	end
+	return table.concat(descriptions, "→")
+end
+
 -- Toggle temp mode on/off
 function obj:toggleTempMode()
 	if self.isActive then -- deactivate mode
 		self.isActive = false
 		self.modal:exit()
-		hs.alert.show("❌ Temp Keybindings: OFF", 1)
+		hs.alert.show("💧", 1)
 		print("Temp keybindings mode deactivated")
 	else -- activate mode
 		self.isActive = true
 		self.modal:enter()
 
-		-- Generate dynamic alert message based on current mappings
-		local alertMessage = "🔥 Temp Keybindings: ON\n"
-		for _, mapping in ipairs(temp_keybindings_mapping) do
-			local actionDesc = ""
-			if mapping.type == "key" then
-				if type(mapping.action) == "string" then
-					actionDesc = mapping.action
-				else
-					actionDesc = table.concat(mapping.action, "+")
-				end
-			else
-				actionDesc = "'" .. mapping.action .. "'"
-			end
-			alertMessage = alertMessage .. mapping.key .. "→" .. actionDesc .. ", "
-		end
-		alertMessage = alertMessage .. "Cmd+H to exit"
-
-		hs.alert.show(alertMessage, 3)
+		hs.alert.show("🔥", 2)
 		print("Temp keybindings mode activated")
 	end
 end
